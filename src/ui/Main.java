@@ -3,6 +3,7 @@ package ui;
 import java.util.Scanner;
 import structures.PilaGenerica;
 import structures.TablasHash;
+import java.util.LinkedHashSet;
 
 public class Main {
 
@@ -64,9 +65,32 @@ public class Main {
      * @return true si esta balanceada, false si no
      */
     public boolean verificarBalanceo(String s) {
-        // TODO: completar 
-        return false;
+        PilaGenerica<Character> pila= new PilaGenerica<>(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            if (c=='('||c=='['||c=='{'){
+                pila.Push(c);
+            }
+            else if (c==')'||c==']'||c=='}'){
+                if (pila.getTop()==0){
+                    return false;
+                }
+
+                char apertura=pila.Pop();
+
+                if (c==')'&& apertura!='('||c==']'&& apertura!='['|| c=='}'&& apertura!='{'){
+                    return false;
+                }
+
+            }
+            
+        }
+        return pila.getTop()==0;
+
+
     }
+
 
     /**
      * Encuentra y muestra todos los pares unicos de numeros que sumen objetivo usando TablasHash.
@@ -74,8 +98,47 @@ public class Main {
      * @param objetivo suma objetivo
      */
     public void encontrarParesConSuma(int[] numeros, int objetivo) {
-        // TODO: completar
+
+        try{
+            TablasHash tabla = new TablasHash(numeros.length*2);
+
+            for(int numero:numeros){
+                tabla.insert(numero,numero);
+            }
+
+            LinkedHashSet<String> paresUnicos = new LinkedHashSet<>();
+            for (int numero:numeros){
+                int complemento=objetivo-numero;
+                if (tabla.search(complemento,complemento)&& complemento!=numero){
+                    int a = Math.min(numero,complemento);
+                    int b = Math.max(numero,complemento);
+                    String par = "("+a + "," + b+")";
+                    paresUnicos.add(par);
+                }
+            }
+
+            if (paresUnicos.isEmpty()) {
+                System.out.println("Ningún par suma "+objetivo+" (Recordar que deben ser diferentes los números)");
+            } else {
+                System.out.println("Pares encontrados:");
+                for (String p : paresUnicos) {
+                    
+                    System.out.println(p);
+                }
+            }
+        
+        }catch (Exception e) {
+            
+        }
+
+
+
     }
+
+
+
+
+
 
     public static void main(String[] args) throws Exception {
         Main app = new Main();
